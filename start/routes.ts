@@ -28,7 +28,8 @@ Route.group(() => {
   Route.post('register', 'AuthController.register')
   Route.post('login', 'AuthController.login')
   Route.group(() => {
-    Route.resource('posts', 'PostsController').apiOnly()
+    Route.post('search', 'MoviesearchesController.index')
+    Route.resource('posts', 'PostController').apiOnly()
     Route.resource('forums', 'ForumsController').apiOnly()
     Route.resource('comments', 'CommentsController').apiOnly()
     Route.get('users/forums', 'UsersController.forumsByUser')

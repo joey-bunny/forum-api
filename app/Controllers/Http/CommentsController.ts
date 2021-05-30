@@ -32,4 +32,29 @@ export default class CommentsController {
 
     return comments
   }
+
+  public async destroy ({ auth, params, response}: HttpContextContract) {
+    const comment = await Comment.findOrFail(params.id)
+    const user = await auth.authenticate()
+
+    if (comment) {
+      const commentuid = comment.userId
+
+      if(commentuid === user.id) {
+        await comment.delete()
+
+        return response.json({
+          'status': 'Comment deleted',
+        })
+      }
+
+      return response.json({
+        'status': 'Unauthorized to delete comment',
+      })
+    }
+
+    return response.json({
+      'status': 'Comment not found',
+    })
+  }
 }

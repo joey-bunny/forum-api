@@ -1,11 +1,17 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Post from 'App/Models/Post'
+import PostRepository from 'App/Repositories/PostRepository'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
-export default class PostsController {
+export default class PostController {
+  private repository
+
+  constructor () {
+    this.repository = new PostRepository()
+  }
+
   public async index ({}: HttpContextContract) {
-    const posts = await Post.query().preload('users').preload('forums')
-    return posts
+    return this.repository.getAllPosts()
   }
 
   public async store ({ auth, request }: HttpContextContract) {
@@ -29,9 +35,11 @@ export default class PostsController {
 
     const user = await auth.user
     const post = new Post()
+
     post.title = validatedData.title
     post.content = validatedData.content
     post.forumId = validatedData.forum
+
     await user?.related('posts').save(post)
 
     return post
